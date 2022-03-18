@@ -71,7 +71,7 @@ def main(dataset='cifar10'):
 
     config = {
         "n_classes": num_classes,
-        "batch_size": 128,
+        "batch_size": 1024,
         "lr": 1e-3,
         "gradient_clip_val": 0.5,
         "num_epochs": 50,
@@ -89,10 +89,10 @@ def main(dataset='cifar10'):
     print('Preparing Datasets')
     data_transforms = transforms.Compose([ transforms.ToTensor(),\
          transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))])
-    trainset = torchvision.datasets.CIFAR10(root=data_root, train=True,
+    trainset = torchvision.datasets.CIFAR100(root=data_root, train=True,
                                         download=True, transform=data_transforms)
     train_loader = torch.utils.data.DataLoader(trainset, batch_size=config['batch_size'], shuffle=True, num_workers=1)
-    testset = torchvision.datasets.CIFAR10(root=data_root, train=False,
+    testset = torchvision.datasets.CIFAR100(root=data_root, train=False,
                                         download=True, transform=data_transforms)
     test_loader = torch.utils.data.DataLoader(testset, batch_size=config['batch_size'], shuffle=True, num_workers=1)
 
@@ -175,18 +175,7 @@ def main(dataset='cifar10'):
     plt.savefig(f'curves/acc_curves_{dataset}.jpg', bbox_inches='tight', dpi=150)
     plt.close()
 
-    print('***** Testing ********')
-
-
-    PATH = f"/home/gaurangajitk/DL/cnn_YNet/model_checkpoint/best_checkpoint_{dataset}.pth"
-    checkpoint = torch.load(PATH)
-    model = YNet(config)
-    model.to(device)
-    model.load_state_dict(checkpoint['model'])
-    del checkpoint
-    test_loss, test_acc = test(test_loader, model, criterion, device)
-    print(f'Test Loss= {test_loss}, Test Acc= {test_acc}')
-    logging.info(f'Test Loss= {test_loss}, Test Acc= {test_acc}')
+    # end
     diff = time.time() - start
     logging.info(f'Total time taken= {str(diff)} s')
     print(f'Total time taken= {str(diff)} s')
